@@ -1,6 +1,6 @@
 <?php
 	header('Content-Type: application/json');
-	$conn = mysqli_connect("localhost","root","","test");
+	$conn = mysqli_connect("localhost","root","","farm_db");
 
 	$sql = "SELECT * FROM sensor_value where sensorv_id =".$_GET['sensorv_id'];
 
