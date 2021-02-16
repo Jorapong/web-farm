@@ -20,26 +20,27 @@
 </head>
 
 <body class="sidebar-collapse">
-  <script type="text/javascript">
+  <!-- <script type="text/javascript">
     $(document).ready(function() {
       var auto_refresh = setInterval(
-            function() {$.ajax({
-        type: "POST",
-        url: "getjson.php",
-        data: '',
-        success: function(msg) {
-          console.log("tttt" + msg);
-          $("#content1").text(msg.ph);
-          $('#content2').text(msg.ec);
-          $('#content3').text(msg.flow);
-          $('#content4').text(msg.waterlevel);
-          $('#content5').text(msg.ldr);
-        }
-      })
+        function() {
+          $.ajax({
+            type: "POST",
+            url: "getjson.php",
+            data: '',
+            success: function(msg) {
+              console.log("tttt" + msg);
+              $("#content1").text(msg.ph);
+              $('#content2').text(msg.ec);
+              $('#content3').text(msg.flow);
+              $('#content4').text(msg.waterlevel);
+              $('#content5').text(msg.ldr);
+            }
+          })
+        });
+
     });
-      
-    });
-  </script>
+  </script> -->
   <div class="wrapper">
     <!-- Navbar -->
     <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -127,7 +128,7 @@
                 <div class="info-box-content">
                   <span class="info-box-text">Water Flow</span>
                   <span class="info-box-number">
-                    <div id="content3"><?php echo $row['flow_pump']; ?></div>
+                    <div id="content3"><?php echo $row['flow_pump']; ?> l/min</div>
                   </span>
                 </div>
                 <!-- /.info-box-content -->
@@ -157,7 +158,7 @@
                 <div class="info-box-content">
                   <span class="info-box-text">Water Level</span>
                   <span class="info-box-number">
-                    <div id="content5"><?php echo $row[4]; ?></div>
+                    <div id="content5"><?php echo $row["waterlevel"]; ?></div>
                   </span>
                 </div>
                 <!-- /.info-box-content -->
@@ -167,11 +168,11 @@
             <!-- /.col -->
             <div class="col-md-2 col-sm-5 col-10">
               <div class="info-box mb-3">
-                <span class="info-box-icon bg-success elevation-1"><i class="fas fa-fan"></i></span>
+                <span class="info-box-icon bg-light elevation-1"><i class="fas fa-temperature-high"></i></span>
                 <div class="info-box-content">
                   <span class="info-box-text">Water Temp</span>
                   <span class="info-box-number">
-                    <div id="content3"><?php echo $row['temp']; ?></div>
+                    <div id="content3"><?php echo $row['temp']; ?> °C</div>
                   </span>
                 </div>
                 <!-- /.info-box-content -->
@@ -181,12 +182,17 @@
             <!-- /.col -->
           </div>
           <!-- /.row -->
+          <?php
+          $sql = "SELECT * FROM veget where veget_id=" . $_GET['sensorv_id'];
+          $res = mysqli_query($conn, $sql);
+          $row = mysqli_fetch_array($res);
+          ?>
           <div class="row">
             <div class="col-md-6">
               <!-- AREA CHART -->
               <div class="card card-primary">
                 <div class="card-header">
-                  <h3 class="card-title">Area Chart</h3>
+                  <h3 class="card-title">รูปภาพ แปลงผัก</h3>
 
                   <div class="card-tools">
                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -199,12 +205,97 @@
                 </div>
                 <div class="card-body">
                   <div class="chart">
-                    <canvas id="areaChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                    <img class="img-fluid pad" src="<?php echo $row['img']; ?>" alt="Photo">
                   </div>
                 </div>
                 <!-- /.card-body -->
               </div>
               <!-- /.card -->
+            </div>
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header border-0">
+                  <h3 class="card-title"> ค่า EC และ Ph ที่ต้องการ</h3>
+                  <div class="card-tools">
+                    <a href="#" class="btn btn-tool btn-sm">
+                      <i class="fas fa-download"></i>
+                    </a>
+                    <a href="#" class="btn btn-tool btn-sm">
+                      <i class="fas fa-bars"></i>
+                    </a>
+                  </div>
+                </div>
+                <div class="card-body p-0">
+                  <table class="table table-striped table-valign-middle">
+                    <thead>
+                      <tr>
+                        <th>ค่า</th>
+                        <th>ค่าที่ใช้</th>
+                        <th>วันที่</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php
+                      $sql = mysqli_query($conn, "SELECT * FROM veget_value where veget_id=" . $_GET['sensorv_id'] . " ORDER BY type_value ");
+                      while ($row = mysqli_fetch_array($sql)) {
+                        echo '<tr>
+                          <td>
+                          <i class="fas fa-burn"></i>
+                          ' . $row['type_value'] . '
+                          </td>
+                          <td>' . $row['value'] . '</td>
+                          <td>' . $row['date'] . '</td>
+                        </tr>';
+                      } ?>
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header border-0">
+                  <h3 class="card-title"> สถานะอุปกรณ์</h3>
+                  <div class="card-tools">
+                    <a href="#" class="btn btn-tool btn-sm">
+                      <i class="fas fa-download"></i>
+                    </a>
+                    <a href="#" class="btn btn-tool btn-sm">
+                      <i class="fas fa-bars"></i>
+                    </a>
+                  </div>
+                </div>
+                <div class="card-body p-0">
+                  <table class="table table-striped table-valign-middle">
+                    <thead>
+                      <tr>
+                        <th>เซ็นเซอร์วัดค่า</th>
+                        <th>Node ส่งข้อมูล</th>
+                        <th>ตัวประมวลผล</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><i class="fas fa-atom"></i></td>
+                        <td><i class="far fa-comments"></i></td>
+                        <td><i class="fas fa-code-branch"></i></td>
+                      </tr>
+                      <?php
+                      $sql = mysqli_query($conn, "SELECT * FROM status where status_id=".$_GET['sensorv_id']);
+                      $row = mysqli_fetch_array($sql)?>
+                        <tr>
+                          <td><?php if($row['node1']==1){echo "สถานะปกติ";}
+                          else{echo "สถานะขัดข้อง";} ?></td>
+                          <td><?php if($row['node2']==1){echo "สถานะปกติ";} 
+                          else{echo "สถานะขัดข้อง";} ?></td>
+                          <td><?php if($row['node3']==1){echo "สถานะปกติ";} 
+                          else{echo "สถานะขัดข้อง";} ?></td>
+                        </tr>
+                      
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
             <!-- /.row -->
           </div>

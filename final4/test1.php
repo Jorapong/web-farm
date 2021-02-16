@@ -1,35 +1,18 @@
-<!DOCTYPE html>
 <html>
-<title>Ajax Without Refresh</title>
-<head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-</head>
-<style>
-div {
- background-color: aquamarine;
- width:350px;
-}
-</style>
-<body>
-
-<button class="refresher">Refresh Div</button>
-<div id="div-to-refresh">
-<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. </p>
-</div>
-
-<script type="text/javascript">
-$(document).ready(function () {
-$(document).on('click', '.refresher', function () {
-$.ajax({
-url: 'get_div.php',
-method: "GET",
-dataType: 'json',
-success: function(response) {
-   $('#div-to-refresh').html(response);
-}
-});
-});
-});
-</script>
-</body>
+   <head>
+      
+      <script type = "text/JavaScript">
+         <!--
+            function AutoRefresh( t ) {
+               setTimeout("location.reload(true);", t);
+            }
+         //-->
+      </script>
+      
+   </head>
+   
+   <body onload = "JavaScript:AutoRefresh(5000);">
+      <p>This page will refresh every 5 seconds.</p>
+   </body>
+   
 </html>

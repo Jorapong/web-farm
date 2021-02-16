@@ -1,7 +1,7 @@
 <?php
 
-    $server = "localhost";
-    $user = "root";
+    $server = "192.168.1.48";
+    $user = "test";
     $password = "";
     $db_name = "farm_db";
     $conn = new mysqli($server,$user,$password,$db_name);
